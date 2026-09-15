@@ -15,6 +15,7 @@ class LatihanDrawer extends StatefulWidget {
 }
 
 class _LatihanDrawerState extends State<LatihanDrawer> {
+  int _currentIndex = 0;
   int _selectedIndex = 0;
   final List<String> _titles = [
     'latihan Checkbox',
@@ -23,7 +24,7 @@ class _LatihanDrawerState extends State<LatihanDrawer> {
     'latihan datapicker',
     'latihan timepicker',
   ];
-  final List<Widget> _pages = [
+  final List<Widget> _drawerPages = [
     const TugasSkemadesian(),
     const LatihanSwitch(),
     const LatihanDropdown(),
@@ -43,7 +44,9 @@ class _LatihanDrawerState extends State<LatihanDrawer> {
         title: Text(_titles[_selectedIndex]),
         backgroundColor: const Color(0xE80202EB),
       ),
-      body: _pages[_selectedIndex],
+
+      body: _drawerPages[_selectedIndex],
+
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -58,7 +61,7 @@ class _LatihanDrawerState extends State<LatihanDrawer> {
                   style: TextStyle(fontSize: 40.0, color: Colors.blue),
                 ),
               ),
-              decoration: BoxDecoration(color: Color.fromARGB(255, 7, 23, 255)),
+              decoration: BoxDecoration(color: Color(0xFF0717FF)),
             ),
             ListTile(
               leading: const Icon(Icons.checklist),
@@ -107,6 +110,19 @@ class _LatihanDrawerState extends State<LatihanDrawer> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Cari'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+        ],
       ),
     );
   }

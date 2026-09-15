@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 
 import 'package:ixia_build/pages/latihan_drawer.dart';
-
+import 'package:ixia_build/pages/latihan_navigasidanbotton.dart';
+import 'package:ixia_build/pages/latihan_validasi.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const LatihanDrawer(),
+      home: const LoginScreenDB(),
     );
   }
 }
