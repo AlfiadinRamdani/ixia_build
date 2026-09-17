@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Container(
                                   child: Image.asset('assets/icons/pusing.png'),
                                 ),
-                                SizedBox(width: 12),
+                                SizedBox(width: 190),
                                 Text('Continue with Google'),
                               ],
                             ),

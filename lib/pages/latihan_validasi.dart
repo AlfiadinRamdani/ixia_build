@@ -10,6 +10,8 @@ class LoginScreenDB extends StatefulWidget {
 class _LoginScreenDBState extends State<LoginScreenDB> {
   final _formkey = GlobalKey<FormState>();
   final emailController = TextEditingController();
+  final userController = TextEditingController();
+  final kotaController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,8 +59,27 @@ class _LoginScreenDBState extends State<LoginScreenDB> {
                     // EMAIL
                     // =========================
                     TextFormField(
+                      controller: userController,
+                      decoration: InputDecoration(
+                        labelText: 'user',
+                        hintText: 'Masukkan user name',
+                        prefixIcon: const Icon(Icons.account_circle),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
                       controller: emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: const Icon(Icons.email),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Email wajib diisi';
@@ -87,6 +108,17 @@ class _LoginScreenDBState extends State<LoginScreenDB> {
                     ),
 
                     const SizedBox(height: 24),
+                    TextFormField(
+                      controller: kotaController,
+                      decoration: InputDecoration(
+                        labelText: 'kota',
+                        hintText: 'Masukkan kota asal',
+                        prefixIcon: const Icon(Icons.location_city),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
 
                     // =========================
                     // BUTTON
@@ -102,24 +134,28 @@ class _LoginScreenDBState extends State<LoginScreenDB> {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Email: ${emailController.text}'),
+                                  Text('Email: ${userController.text}'),
+                                  Text('Kota: ${kotaController.text}'),
                                 ],
                               ), // Column
                               actions: [
                                 TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: 
-                                      (context) => 
-                                        HalamanTerimaKasih(email: emailController.text),
-                                  ), // MaterialPageRoute
-                                );
-                              },
-                              child: Text('Lanjutkan'),
-                            ), // TextButton
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            HalamanTerimaKasih(
+                                              email: emailController.text,
+                                              user: userController.text,
+                                              kota: kotaController.text,
+                                            ),
+                                      ), // MaterialPageRoute
+                                    );
+                                  },
+                                  child: Text('Lanjutkan'),
+                                ), // TextButton
                               ],
                             ), // AlertDialog
                           );
@@ -140,7 +176,15 @@ class _LoginScreenDBState extends State<LoginScreenDB> {
 
 class HalamanTerimaKasih extends StatelessWidget {
   final String email;
-  const HalamanTerimaKasih({super.key, required this.email});
+  final String user;
+  final String kota;
+
+  const HalamanTerimaKasih({
+    super.key,
+    required this.email,
+    required this.user,
+    required this.kota,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +192,7 @@ class HalamanTerimaKasih extends StatelessWidget {
       appBar: AppBar(title: Text('Konfirmasi')),
       body: Center(
         child: Text(
-          'Terima kasih, $email',
+          'Terima kasih, $user, $kota',
           style: TextStyle(fontSize: 18),
           textAlign: TextAlign.center,
         ), // Text

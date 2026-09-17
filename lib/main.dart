@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:ixia_build/tugas11/preferencehandler11.dart';
+import 'package:ixia_build/tugas11/splash_screen11.dart';
 
-
-import 'package:ixia_build/pages/latihan_drawer.dart';
-import 'package:ixia_build/pages/latihan_navigasidanbotton.dart';
-import 'package:ixia_build/pages/latihan_validasi.dart';
-
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await PreferenceHandlerTugas.init();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      //title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const LoginScreenDB(),
+      home: const SplashScreen(),
     );
   }
 }
