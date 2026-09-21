@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ixia_build/tugas11/preferencehandler11.dart';
-import 'package:ixia_build/tugas11/splash_screen11.dart';
+
+import 'package:ixia_build/tugas12/user_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const SplashScreen(),
+      home: const UserPagetugas(),
     );
   }
 }

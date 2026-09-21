@@ -39,7 +39,11 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Icon(Icons.mobile_friendly, size: 100),
+            Icon(
+              Icons.mobile_friendly,
+              size: 100,
+              color: Color.fromARGB(255, 237, 5, 5),
+            ),
             SizedBox(height: 20),
             Text(
               'Siap Untuk Pusing',

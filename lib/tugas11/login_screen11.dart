@@ -46,7 +46,11 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.account_circle, size: 100),
+            const Icon(
+              Icons.account_circle,
+              size: 100,
+              color: Color.fromARGB(255, 5, 17, 188),
+            ),
             const SizedBox(height: 30),
             const TextField(
               decoration: InputDecoration(
