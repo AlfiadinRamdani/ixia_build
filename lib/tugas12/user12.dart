@@ -1,11 +1,13 @@
-class UserModel {
-  int? id;
-  String nama;
-  String email;
-  String noHp;
-  String password;
-  String asalKota;
+import 'dart:convert';
 
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+class UserModel {
+  final int? id;
+  final String nama;
+  final String email;
+  final String noHp;
+  final String password;
+  final String asalKota;
   UserModel({
     this.id,
     required this.nama,
@@ -15,29 +17,31 @@ class UserModel {
     required this.asalKota,
   });
 
-  // Mengubah object UserModel menjadi Map
-  // untuk disimpan ke database
+ 
+
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'nama': nama,
       'email': email,
-      'no_hp': noHp,
+      'noHp': noHp,
       'password': password,
-      'asal_kota': asalKota,
+      'asalKota': asalKota,
     };
   }
 
-  // Mengubah data Map dari database
-  // menjadi object UserModel
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'],
-      nama: map['nama'],
-      email: map['email'],
-      noHp: map['no_hp'],
-      password: map['password'],
-      asalKota: map['asal_kota'],
+      id: map['id'] != null ? map['id'] as int : null,
+      nama: map['nama'] as String,
+      email: map['email'] as String,
+      noHp: map['noHp'] as String,
+      password: map['password'] as String,
+      asalKota: map['asalKota'] as String,
     );
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory UserModel.fromJson(String source) => UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

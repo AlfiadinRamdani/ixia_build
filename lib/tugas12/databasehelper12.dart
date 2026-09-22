@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:ixia_build/tugas12/user12.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -35,39 +36,90 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nama TEXT NOT NULL,
-        email TEXT NOT NULL,
-        no_hp TEXT NOT NULL,
-        password TEXT NOT NULL,
-        asal_kota TEXT NOT NULL
+        nama TEXT ,
+        email TEXT UNIQUE,
+        no_hp TEXT ,
+        password TEXT ,
+        asal_kota TEXT 
       )
     ''');
   }
 
+  Future<bool> registerUser(UserModel pengguna) async {
+    final db = await database;
+
+    try {
+      // db.insert menerima nama tabel dan Map data dari model
+      await db.insert('users', pengguna.toMap());
+      return true;
+    } catch (e) {
+      developer.log('Error saat registerUser: ${e.toString()}');
+      return false;
+    }
+  }
+
   // CHECK UNIQUE NAME
-  Future<bool> isNamaExist(String nama) async {
-    final db = await instance.database;
-    final result = await db.query(
+  Future<UserModel?> loginUser(String email, String password) async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.query(
       'users',
-      where: 'nama = ?',
-      whereArgs: [nama],
+      where: 'email = ? AND password = ?',
+      whereArgs: [
+        email,
+        password,
+      ], // Parameter '?' akan digantikan oleh nilai ini secara aman
     );
-    return result.isNotEmpty;
+
+    // Jika data ditemukan (results tidak kosong), kembalikan data user pertama
+    if (results.isNotEmpty) {
+      return UserModel.fromMap(results.first);
+    }
+    // Jika tidak ditemukan atau password salah, kembalikan null
+    return null;
   }
 
-  // CREATE
-  Future<int> insertUser(UserModel user) async {
-    final db = await instance.database;
+  /// --------------------------------------------------------------------------
+  /// 3. READ ALL: Mengambil Seluruh Data Pengguna
+  /// --------------------------------------------------------------------------
+  /// Mengambil semua baris data di tabel 'users' dan mengubahnya menjadi `List<UserModelsSQL>`.
+  Future<List<UserModel>> getAllUsers() async {
+    final db = await database;
+    // Query tanpa 'where' akan mengambil seluruh record di tabel
+    final List<Map<String, dynamic>> results = await db.query('users');
 
-    return await db.insert('users', user.toMap());
+    // Konversi setiap Map hasil query menjadi objek UserModelsSQL menggunakan fromMap()
+    return results.map((map) => UserModel.fromMap(map)).toList();
   }
 
-  // READ ALL
-  Future<List<UserModel>> getUsers() async {
-    final db = await instance.database;
+  /// --------------------------------------------------------------------------
+  /// 4. DELETE: Menghapus Pengguna Berdasarkan ID
+  /// --------------------------------------------------------------------------
+  /// Menghapus baris pada tabel 'users' yang memiliki ID yang cocok.
+  Future<void> deleteUser(int id) async {
+    final db = await database;
+    await db.delete('users', where: 'id = ?', whereArgs: [id]);
+  }
 
-    final result = await db.query('users', orderBy: 'id DESC');
+  /// --------------------------------------------------------------------------
+  /// 5. UPDATE: Memperbarui Data Pengguna
+  /// --------------------------------------------------------------------------
+  /// Mengubah data email / password pengguna berdasarkan ID-nya.
+  /// Mengembalikan `true` jika setidaknya ada 1 baris yang terupdate.
+  Future<bool> updateUser(UserModel pengguna) async {
+    final db = await database;
 
-    return result.map((map) => UserModel.fromMap(map)).toList();
+    try {
+      int count = await db.update(
+        'users',
+        pengguna.toMap(),
+        where: 'id = ?',
+        whereArgs: [pengguna.id],
+      );
+      // count adalah jumlah baris yang berhasil diubah di database
+      return count > 0;
+    } catch (e) {
+      developer.log('Error saat updateUser: ${e.toString()}');
+      return false;
+    }
   }
 }

@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Center(
-                      child: Container(
+                      child: SizedBox(
                         width: 28,
                         height: 28,
                         child: Image.asset('assets/icons/Vector.png'),

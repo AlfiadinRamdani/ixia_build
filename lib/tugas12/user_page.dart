@@ -27,7 +27,7 @@ class _UserPagetugasState extends State<UserPagetugas> {
   @override
   void initState() {
     super.initState();
-    users = DatabaseHelper.instance.getUsers();
+    users = DatabaseHelper.instance.getAllUsers();
   }
 
   // Fungsi simpan data
@@ -44,7 +44,7 @@ class _UserPagetugasState extends State<UserPagetugas> {
       asalKota: kotaController.text,
     );
 
-    await DatabaseHelper.instance.insertUser(user);
+    await DatabaseHelper.instance.registerUser(user);
 
     // Kosongkan form
     namaController.clear();
@@ -55,7 +55,7 @@ class _UserPagetugasState extends State<UserPagetugas> {
 
     // Ambil ulang data dari database
     setState(() {
-      users = DatabaseHelper.instance.getUsers();
+      users = DatabaseHelper.instance.getAllUsers();
     });
   }
 
@@ -201,6 +201,14 @@ class _UserPagetugasState extends State<UserPagetugas> {
                       ),
                     ),
                   ),
+                  ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          simpanData();
+                        }
+                      },
+                      child: Text('Register'),
+                    ),
                 ],
               ),
             ),
