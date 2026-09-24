@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ixia_build/tugas11/home_screen11.dart';
 import 'package:ixia_build/tugas11/login_screen11.dart';
 import 'package:ixia_build/tugas11/preferencehandler11.dart';
+import 'package:ixia_build/tugas13/list_user13.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateToNext() {
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 15), () {
       if (!mounted) return;
 
       final nextScreen = PreferenceHandlerTugas.isLogin
@@ -40,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             Icon(
-              Icons.mobile_friendly,
+              Icons.psychology_alt_outlined,
               size: 100,
               color: Color.fromARGB(255, 237, 5, 5),
             ),

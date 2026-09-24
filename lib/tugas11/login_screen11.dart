@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ixia_build/tugas11/home_screen11.dart';
 import 'package:ixia_build/tugas11/preferencehandler11.dart';
+import 'package:ixia_build/tugas13/list_user13.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool showLogoutMessage;
@@ -33,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
+      MaterialPageRoute(builder: (context) => const UserListPage()),
     );
   }
 
@@ -47,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(
-              Icons.account_circle,
+              Icons.psychology_alt_rounded,
               size: 100,
               color: Color.fromARGB(255, 5, 17, 188),
             ),
