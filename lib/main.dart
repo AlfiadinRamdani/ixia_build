@@ -1,27 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:ixia_build/tugas11/preferencehandler11.dart';
-import 'package:ixia_build/tugas11/splash_screen11.dart';
+import 'package:ixia_build/tugas15/pages/dashboard_pages15.dart';
+import 'package:ixia_build/tugas15/pages/login_pages15.dart';
+import 'package:ixia_build/tugas15/pages/theme_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:ixia_build/tugas12/user_page.dart';
-import 'package:ixia_build/tugas13/list_user13.dart';
-import 'package:ixia_build/tugas14/views/pokedexpage.dart';
 
-Future<void> main() async {
+void main() async {
+  // Memastikan binding Flutter siap sebelum menjalankan kode async
   WidgetsFlutterBinding.ensureInitialized();
-  await PreferenceHandlerTugas.init();
-  runApp(const MyApp());
+
+  // Cek apakah user sudah memiliki token login di SharedPreferences
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('token');
+
+  runApp(MyApp(isLoggedIn: token != null && token.isNotEmpty));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const PokedexPage(),
+    // Mendengarkan perubahan pada themeNotifier untuk merender ulang tema
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (context, currentMode, child) {
+        return MaterialApp(
+          title: 'Aplikasi Absensi',
+          debugShowCheckedModeBanner: false,
+
+          // Pengaturan Tema Terintegrasi
+          themeMode: currentMode,
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              brightness: Brightness.light,
+            ),
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              brightness: Brightness.dark,
+            ),
+          ),
+
+          // Logika Routing Awal: jika token ada langsung ke Dashboard, jika tidak ke Login
+          home: isLoggedIn ? const DashboardPages15() : const LoginPages15(),
+        );
+      },
     );
   }
 }
