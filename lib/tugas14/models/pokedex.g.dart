@@ -40,6 +40,12 @@ PokemonDetail _$PokemonDetailFromJson(Map<String, dynamic> json) =>
       sprites: json['sprites'] == null
           ? null
           : Sprites.fromJson(json['sprites'] as Map<String, dynamic>),
+      rawTypes: (json['types'] as List<dynamic>?)
+          ?.map((e) => TypeEntry.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      rawAbilities: (json['abilities'] as List<dynamic>?)
+          ?.map((e) => AbilityEntry.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$PokemonDetailToJson(PokemonDetail instance) =>
@@ -49,8 +55,43 @@ Map<String, dynamic> _$PokemonDetailToJson(PokemonDetail instance) =>
       'height': instance.height,
       'weight': instance.weight,
       'base_experience': instance.baseExperience,
-      'sprites': instance.sprites,
+      'sprites': instance.sprites?.toJson(),
+      'types': instance.rawTypes?.map((e) => e.toJson()).toList(),
+      'abilities': instance.rawAbilities?.map((e) => e.toJson()).toList(),
     };
+
+TypeEntry _$TypeEntryFromJson(Map<String, dynamic> json) => TypeEntry(
+  slot: (json['slot'] as num?)?.toInt(),
+  type: json['type'] == null
+      ? null
+      : NamedResource.fromJson(json['type'] as Map<String, dynamic>),
+);
+
+Map<String, dynamic> _$TypeEntryToJson(TypeEntry instance) => <String, dynamic>{
+  'slot': instance.slot,
+  'type': instance.type?.toJson(),
+};
+
+AbilityEntry _$AbilityEntryFromJson(Map<String, dynamic> json) => AbilityEntry(
+  isHidden: json['is_hidden'] as bool?,
+  slot: (json['slot'] as num?)?.toInt(),
+  ability: json['ability'] == null
+      ? null
+      : NamedResource.fromJson(json['ability'] as Map<String, dynamic>),
+);
+
+Map<String, dynamic> _$AbilityEntryToJson(AbilityEntry instance) =>
+    <String, dynamic>{
+      'is_hidden': instance.isHidden,
+      'slot': instance.slot,
+      'ability': instance.ability?.toJson(),
+    };
+
+NamedResource _$NamedResourceFromJson(Map<String, dynamic> json) =>
+    NamedResource(name: json['name'] as String?, url: json['url'] as String?);
+
+Map<String, dynamic> _$NamedResourceToJson(NamedResource instance) =>
+    <String, dynamic>{'name': instance.name, 'url': instance.url};
 
 Sprites _$SpritesFromJson(Map<String, dynamic> json) => Sprites(
   other: json['other'] == null
