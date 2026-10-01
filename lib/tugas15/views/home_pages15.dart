@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import 'package:geolocator/geolocator.dart';
 import 'package:ixia_build/tugas15/models/check_in_models.dart';
 import 'package:ixia_build/tugas15/models/check_out_models.dart';
 import 'package:ixia_build/tugas15/models/profil_models.dart';
 import 'package:ixia_build/tugas15/services/api_services.dart';
 import 'package:ixia_build/tugas15/services/dio_client.dart';
+import 'package:ixia_build/tugas15/views/riwayat_kehadiran15.dart';
 
 class HomePages15 extends StatefulWidget {
   const HomePages15({super.key});
@@ -34,14 +35,16 @@ class _HomePages15State extends State<HomePages15> {
     _fetchInitialData();
   }
 
-  // 1. Ambil Data Profil Pengguna Saat Halaman Dimuat
+  // 1. Ambil Data Profil Pengguna
   Future<void> _fetchInitialData() async {
     setState(() => _isLoading = true);
     try {
       final profile = await _apiService.profiluser();
-      setState(() {
-        _userProfile = profile;
-      });
+      if (mounted) {
+        setState(() {
+          _userProfile = profile;
+        });
+      }
     } on DioException catch (e) {
       _showSnackBar(
         e.response?.data['message'] ?? 'Gagal memuat profil',
@@ -50,27 +53,33 @@ class _HomePages15State extends State<HomePages15> {
     } catch (e) {
       _showSnackBar('Terjadi kesalahan: $e', isError: true);
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  // 2. Fungsi API untuk Check-In
+  // 2. Fungsi Check-In via API
+  // Perform check‑in using device location
   Future<void> _handleCheckIn() async {
     setState(() => _isActionLoading = true);
     try {
-      // Contoh koordinat & alamat dummy (bisa disesuaikan dengan package geolocator)
+      // Get current position
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
       final request = CheckInModels(
-        checkInLat: "-6.200000",
-        checkInLng: "106.816666",
-        checkInAddress: "Jakarta Central Office",
-        status: "Hadir",
+        checkInLat: position.latitude.toString(),
+        checkInLng: position.longitude.toString(),
+        checkInAddress: "${position.latitude}, ${position.longitude}",
+        status: "masuk",
       );
 
       final response = await _apiService.checkuser(request);
 
-      setState(() {
-        _lastCheckIn = response;
-      });
+      if (mounted) {
+        setState(() {
+          _lastCheckIn = response;
+        });
+      }
 
       _showSnackBar(response.message ?? 'Check-In Berhasil!');
     } on DioException catch (e) {
@@ -81,26 +90,33 @@ class _HomePages15State extends State<HomePages15> {
     } catch (e) {
       _showSnackBar('Error: $e', isError: true);
     } finally {
-      setState(() => _isActionLoading = false);
+      if (mounted) setState(() => _isActionLoading = false);
     }
   }
 
-  // 3. Fungsi API untuk Check-Out
+  // 3. Fungsi Check-Out via API
+  // Perform check‑out using device location
   Future<void> _handleCheckOut() async {
     setState(() => _isActionLoading = true);
     try {
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
       final request = CheckOutModels(
-        checkOutLat: "-6.200000",
-        checkOutLng: "106.816666",
-        checkOutLocation: "Office HQ",
-        checkOutAddress: "Jakarta Central Office",
+        checkOutLat: position.latitude.toString(),
+        checkOutLng: position.longitude.toString(),
+        checkOutLocation: "${position.latitude}, ${position.longitude}",
+        checkOutAddress: "${position.latitude}, ${position.longitude}",
       );
 
-      final response = await _apiService.Checkuser(request);
+      // Corrected method name (checkoutuser)
+      final response = await _apiService.checkoutuser(request);
 
-      setState(() {
-        _lastCheckOut = response;
-      });
+      if (mounted) {
+        setState(() {
+          _lastCheckOut = response;
+        });
+      }
 
       _showSnackBar(response.message ?? 'Check-Out Berhasil!');
     } on DioException catch (e) {
@@ -111,7 +127,7 @@ class _HomePages15State extends State<HomePages15> {
     } catch (e) {
       _showSnackBar('Error: $e', isError: true);
     } finally {
-      setState(() => _isActionLoading = false);
+      if (mounted) setState(() => _isActionLoading = false);
     }
   }
 
@@ -125,7 +141,6 @@ class _HomePages15State extends State<HomePages15> {
     );
   }
 
-  // Helper Format Waktu
   String _formatTime(DateTime? dateTime) {
     if (dateTime == null) return '--:--';
     final localTime = dateTime.toLocal();
@@ -157,7 +172,7 @@ class _HomePages15State extends State<HomePages15> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 1. Header (Greeting & Profile)
+                      // Header Profil
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -195,7 +210,7 @@ class _HomePages15State extends State<HomePages15> {
                       ),
                       const SizedBox(height: 24),
 
-                      // 2. Card Presensi Utama
+                      // Card Presensi Utama
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(20),
@@ -212,7 +227,6 @@ class _HomePages15State extends State<HomePages15> {
                         ),
                         child: Column(
                           children: [
-                            // Informasi Lokasi
                             Row(
                               children: [
                                 const Icon(
@@ -250,7 +264,6 @@ class _HomePages15State extends State<HomePages15> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  // Check In Status
                                   Column(
                                     children: [
                                       const Text(
@@ -278,7 +291,6 @@ class _HomePages15State extends State<HomePages15> {
                                     width: 1,
                                     color: Colors.white38,
                                   ),
-                                  // Check Out Status
                                   Column(
                                     children: [
                                       const Text(
@@ -306,7 +318,7 @@ class _HomePages15State extends State<HomePages15> {
                             ),
                             const SizedBox(height: 16),
 
-                            // Tombol Aksi Presensi
+                            // Tombol Aksi Check-In & Check-Out
                             _isActionLoading
                                 ? const CircularProgressIndicator(
                                     color: Color(0xFF538D7C),
@@ -359,7 +371,7 @@ class _HomePages15State extends State<HomePages15> {
                       ),
                       const SizedBox(height: 24),
 
-                      // 3. Menu Utama
+                      // Menu Utama
                       const Text(
                         'Menu Utama',
                         style: TextStyle(
@@ -373,7 +385,15 @@ class _HomePages15State extends State<HomePages15> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _buildMenuItem(Icons.calendar_month, 'Izin', () {}),
-                          _buildMenuItem(Icons.history, 'Riwayat', () {}),
+                          _buildMenuItem(Icons.history, 'Riwayat', () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const RiwayatKehadiran15(),
+                              ),
+                            );
+                          }),
                           _buildMenuItem(
                             Icons.account_balance_wallet,
                             'Klaim',
@@ -384,29 +404,12 @@ class _HomePages15State extends State<HomePages15> {
                       ),
                       const SizedBox(height: 24),
 
-                      // 4. Riwayat Kehadiran Terbaru
-                      const Text(
-                        'Riwayat Kehadiran',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _buildHistoryCard(
-                        'Hari Ini',
-                        _formatTime(_lastCheckIn?.data?.checkIn),
-                        _formatTime(_lastCheckOut?.data?.checkOut),
-                        _lastCheckIn?.data?.status ?? 'Tepat Waktu',
-                      ),
+                      // Riwayat Kehadiran
                     ],
                   ),
                 ),
         ),
       ),
-
-      // 5. Bottom Navigation Bar
       bottomNavigationBar: Container(
         color: const Color(0xFF2C2C2C),
         child: SafeArea(

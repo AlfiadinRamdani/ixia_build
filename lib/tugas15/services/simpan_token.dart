@@ -13,8 +13,8 @@ class SimpanToken {
 
   static Future<void> hapusToken() async {
     final pref = await SharedPreferences.getInstance();
-    await pref.reload();
-    await pref.remove('auntentikasi_token');
+    // Remove stored authentication token and any user related data
+    await pref.remove('autentikasi_token');
     await pref.remove('nama_user');
   }
 }

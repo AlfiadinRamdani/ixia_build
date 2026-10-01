@@ -60,11 +60,11 @@ class _Splash15State extends State<Splash15> {
             ),
             const SizedBox(height: 24),
             const Text(
-              'Siap Untuk Pusing',
+              'Alfiadin Ramdani',
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 235, 219, 7),
+                color: Color.fromARGB(255, 247, 3, 11),
               ),
             ),
             const SizedBox(height: 30),

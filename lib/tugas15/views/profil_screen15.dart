@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ixia_build/tugas15/views/login_pages15.dart';
+import 'package:ixia_build/tugas15/views/edit_profile_screen15.dart';
+import 'package:ixia_build/tugas15/services/simpan_token.dart';
+import 'package:ixia_build/tugas15/services/api_services.dart';
+import 'package:ixia_build/tugas15/services/dio_client.dart';
+import 'package:ixia_build/tugas15/services/theme_provider.dart';
+import 'package:ixia_build/tugas15/models/profil_models.dart';
 
 class ProfilScreen15 extends StatefulWidget {
   const ProfilScreen15({super.key});
@@ -71,7 +78,35 @@ class _ProfileScreenState extends State<ProfilScreen15> {
                         Icons.chevron_right,
                         color: Colors.grey,
                       ),
-                      onTap: () {},
+                      onTap: () async {
+                        // Fetch latest profile data before navigating to edit screen
+                        final dio = createDioClient();
+                        final apiService = ApiService(dio);
+                        try {
+                          final profile = await apiService.profiluser();
+                          if (!mounted) return;
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EditProfileScreen15(currentProfile: profile),
+                            ),
+                          );
+                          // If profile was updated, refresh the screen
+                          if (result != null && mounted) {
+                            setState(() {});
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Gagal memuat profil: $e'),
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            );
+                          }
+                        }
+                      },
                     ),
                     const Divider(height: 1, color: Colors.black26),
                     ListTile(
@@ -89,6 +124,35 @@ class _ProfileScreenState extends State<ProfilScreen15> {
                       ),
                       onTap: () {},
                     ),
+                    const Divider(height: 1, color: Colors.black26),
+                    // Dark Mode Toggle
+                    Consumer<ThemeProvider>(
+                      builder: (context, themeProvider, _) {
+                        return ListTile(
+                          leading: Icon(
+                            themeProvider.isDarkMode
+                                ? Icons.dark_mode
+                                : Icons.light_mode,
+                            color: const Color(0xFF538D7C),
+                          ),
+                          title: Text(
+                            themeProvider.isDarkMode
+                                ? 'Mode Gelap'
+                                : 'Mode Terang',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                          trailing: Switch(
+                            value: themeProvider.isDarkMode,
+                            onChanged: (_) => themeProvider.toggleTheme(),
+                            activeColor: const Color(0xFF538D7C),
+                          ),
+                          onTap: () => themeProvider.toggleTheme(),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -105,7 +169,10 @@ class _ProfileScreenState extends State<ProfilScreen15> {
                     style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
                   trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-                  onTap: () {
+                  onTap: () async {
+                    // Clear stored authentication token before returning to login screen
+                    await SimpanToken.hapusToken();
+                    if (!mounted) return;
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(

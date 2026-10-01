@@ -11,13 +11,15 @@ Dio createDioClient() {
     ),
   );
 
+  // Add interceptor to include Authorization header when token is available
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await SimpanToken.getToken();
 
         if (token != null && token.isNotEmpty) {
-          options.headers['Authorizatio'] = 'Bearer $token';
+          // Correct header name is 'Authorization'
+          options.headers['Authorization'] = 'Bearer $token';
         }
         handler.next(options);
       },
